@@ -37,7 +37,7 @@ public final class Application<T extends Configuration> {
         this.config = Verify.verifyNotNull(config, "config cannot be null.");
     }
 
-    public com.jspengeman.tools.component.Application<T> component(String name, Class componentType) {
+    public Application<T> component(String name, Class componentType) {
         Verify.verifyNotNull(name, "name cannot be null.");
         Verify.verifyNotNull(componentType, "componentType cannot be null.");
 
@@ -46,9 +46,9 @@ public final class Application<T extends Configuration> {
         return this;
     }
 
-    public com.jspengeman.tools.component.Application<T> component(String name,
-                                                                   Class componentType,
-                                                                   ImmutableList<String> dependencyNames) {
+    public Application<T> component(String name,
+                                    Class componentType,
+                                    ImmutableList<String> dependencyNames) {
         Verify.verifyNotNull(name, "name cannot be null.");
         Verify.verifyNotNull(componentType, "componentType cannot be null.");
         Verify.verifyNotNull(dependencyNames, "dependencyNames cannot be null.");
@@ -64,11 +64,7 @@ public final class Application<T extends Configuration> {
         return this;
     }
 
-    /**
-     *
-     * @return
-     */
-    public com.jspengeman.tools.component.Application<T> start() {
+    public Application<T> start() {
         ImmutableList<String> dependencyOrder =
             topologicalSort(dependencyGraph);
         Map<String, Component> constructedComponents = new HashMap<>();
@@ -76,6 +72,9 @@ public final class Application<T extends Configuration> {
         for (String componentName : dependencyOrder) {
             Class componentType = componentClassByName.get(componentName);
 
+            // TODO: Need to update this to potentially use a different data structure
+            //       because the dependencies are unordered and we use them as if they
+            //       are ordered which will obviously fail in a majority of cases.
             ImmutableList<Component> dependencies =
                 dependencyGraph.predecessors(componentName)
                     .stream()
@@ -83,7 +82,7 @@ public final class Application<T extends Configuration> {
                     .collect(ImmutableList.toImmutableList());
 
             Component component =
-                (Component) ObjectCreator.newInstance(
+                (Component) ObjectCreator.create(
                     componentType,
                     ImmutableList
                         .builder()
@@ -107,14 +106,11 @@ public final class Application<T extends Configuration> {
         return this;
     }
 
-    /**
-     *
-     * @return
-     */
-    public com.jspengeman.tools.component.Application<T> stop() {
+    public Application<T> stop() {
         return this;
     }
 
+    // TODO: Need to convert this to a non-mutative algorithm.
     public static <T> ImmutableList<T> topologicalSort(Graph<T> input) {
         MutableGraph<T> graph = Graphs.copyOf(input);
         ImmutableList.Builder<T> sorted = ImmutableList.builder();

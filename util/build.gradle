@@ -1,0 +1,7 @@
+apply plugin: 'java'
+
+dependencies {
+    compile 'com.google.guava:guava:23.5-jre'
+
+    testCompile "org.spockframework:spock-core:1.1-groovy-2.4-rc-2"
+}

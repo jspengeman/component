@@ -1,3 +1,4 @@
 rootProject.name = 'component'
 
 include 'core'
+include 'util'

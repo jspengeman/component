@@ -1,6 +1,7 @@
 package com.jspengeman.tools.component.util;
 
 
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 
 import java.lang.reflect.InvocationTargetException;
@@ -8,16 +9,16 @@ import java.lang.reflect.InvocationTargetException;
 public final class ObjectCreator {
     private ObjectCreator() {}
 
-    public static Object newInstance(
-            Class classType,
-            ImmutableList<Object> arguments) {
-        // get the types for the constructor.
+    public static Object create(Class classType,
+                                ImmutableList<Object> arguments) {
+        Verify.verifyNotNull(classType, "classType cannot be null.");
+        Verify.verifyNotNull(arguments, "arguments cannot be null.");
+
         Class[] paramTypes = new Class[arguments.size()];
         for (int i = 0; i < paramTypes.length; i++) {
             paramTypes[i] = arguments.get(i).getClass();
         }
 
-        // get the params for the constructor.
         Object[] params = new Object[arguments.size()];
         for (int i = 1; i < params.length; i++) {
             params[i] = arguments.get(i);
@@ -32,7 +33,7 @@ public final class ObjectCreator {
                 InstantiationException |
                 IllegalAccessException |
                 InvocationTargetException e) {
-            throw new IllegalArgumentException("Unable to construct component.");
+            throw new IllegalArgumentException("Unable to create.");
         }
     }
 }
