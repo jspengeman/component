@@ -1,0 +1,9 @@
+apply plugin: 'java'
+
+dependencies {
+    compile 'com.google.guava:guava:23.5-jre'
+
+    testCompile 'org.hamcrest:hamcrest-core:1.+',
+                'junit:junit:4.+',
+                'org.mockito:mockito-core:1.+'
+}
