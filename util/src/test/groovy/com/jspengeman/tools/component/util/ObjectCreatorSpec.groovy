@@ -16,12 +16,12 @@ public class ObjectCreatorSpec extends Specification {
     }
 
     def "no matching constructor found throws IllegalArgumentException"() {
-        when: ObjectCreator.create(TestClass.class, ImmutableList.of(1));
+        when: ObjectCreator.create(EmptyTestClass.class, ImmutableList.of(1));
         then: thrown(IllegalArgumentException)
     }
 
     def "cannot access found constructor throws IllegalArgumentException"() {
-        when: ObjectCreator.create(TestClass.class, ImmutableList.of("1", "2"));
+        when: ObjectCreator.create(EmptyTestClass.class, ImmutableList.of("1", "2"));
         then: thrown(IllegalArgumentException)
     }
 
@@ -30,34 +30,33 @@ public class ObjectCreatorSpec extends Specification {
         then: thrown(IllegalArgumentException)
     }
 
-    // TODO: This does not work because the way the types "change" at runtime.
-    def "successfully constructs object with arguments"() {
-        when:
-            def result = ObjectCreator.create(
-                    TestClass.class,
-                    ImmutableList.of(
-                        ImmutableList.of(1, 2, 3),
-                        "string",
-                        2.0))
-        then: result != null;
-    }
-
     def "successfully constructs object with no arguments"() {
         when:
             def result = ObjectCreator.create(
-                TestClass.class,
+                EmptyTestClass.class,
                 ImmutableList.of())
-        then: result != null;
+        then: result != null
     }
 
-    private static class TestClass {
+    def "successfully constructs object with arguments"() {
+        when:
+        def result = ObjectCreator.create(
+                EmptyTestClass.class,
+                ImmutableList.of(
+                    ImmutableList.of(1, 2, 3),
+                    "string",
+                    2.0d))
+        then: result != null
+    }
 
-        public TestClass() {}
+    public static class EmptyTestClass {
 
-        private TestClass(String str1, String str2) {}
+        public EmptyTestClass() {}
 
-        public TestClass(ImmutableList<Integer> nums,
-                         String str,
-                         double dbl) {}
+        private EmptyTestClass(String str1, String str2) {}
+
+        public EmptyTestClass(ImmutableList<Integer> nums,
+                              String str,
+                              double dbl) {}
     }
 }
